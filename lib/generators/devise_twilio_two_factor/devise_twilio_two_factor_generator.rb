@@ -17,7 +17,6 @@ module DeviseTwilioTwoFactor
       def create_devise_twilio_two_factor_migration
         migration_arguments = [
                                 "add_devise_twilio_two_factor_to_#{plural_name}",
-                                "consumed_timestep:integer",
                                 "otp_required_for_login:boolean"
                               ]
 

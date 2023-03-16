@@ -4,6 +4,10 @@ module Devise
       extend ActiveSupport::Concern
       include Devise::Models::DatabaseAuthenticatable
 
+      included do
+        attr_accessor :otp_attempt
+      end
+
       def send_twilio_2fa_otp!
         # implement twilio call to generate and send otp to user
         return "sent code to user!"

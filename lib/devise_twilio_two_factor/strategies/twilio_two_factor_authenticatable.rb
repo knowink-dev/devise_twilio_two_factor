@@ -19,7 +19,7 @@ module Devise
 
       def validate_otp(resource)
         return true unless resource.otp_required_for_login
-        # return if params[scope]['otp_attempt'].nil?
+        return if params[scope]['otp_attempt'].nil?
         resource.validate_twilio_otp!(params[scope]['otp_attempt'])
       end
     end
