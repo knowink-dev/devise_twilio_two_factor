@@ -8,3 +8,6 @@ module DeviseTwilioTwoFactor
   class Error < StandardError; end
   # Your code goes here...
 end
+
+Devise.add_module(:twilio_two_factor_authenticatable, :route => :session,
+                  :strategy => true, :controller => :sessions, :model => true)
