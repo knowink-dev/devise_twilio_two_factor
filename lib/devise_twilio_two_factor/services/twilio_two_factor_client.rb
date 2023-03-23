@@ -1,10 +1,10 @@
 class TwilioTwoFactorAuthClient
+
+  attr_reader :client, :service
   
-  def initialize(account)
-    account_sid = ENV['TWILIO_ACCOUNT_SID'] || Settings.messages.account_id
-    auth_token = ENV['TWILIO_AUTH_TOKEN'] || Settings.messages.token
-    @client = Twilio::REST::Client.new(account_sid, auth_token) || nil
-    @service = @client.verify.v2.services.create(friendly_name: 'Two Factor Authentication') || nil
+  def initialize(twilio_account_sid, twilio_auth_token, app_name)
+    @client = Twilio::REST::Client.new(twilio_account_sid, twilio_auth_token) || nil
+    @service = @client.verify.v2.services.create(friendly_name: app_name) || nil
   end
 
   def send_otp_code(destination, communication_type = 'sms')
