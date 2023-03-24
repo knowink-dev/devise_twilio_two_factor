@@ -14,9 +14,6 @@ module Devise
   mattr_accessor :otp_code_length
   @@otp_code_length = 6
 
-  mattr_accessor :otp_sender_name
-  @@otp_sender_name = "your app name"
-
   mattr_accessor :twilio_account_sid
   @@twilio_account_sid = "Add to your secrets then set in devise.rb"
 

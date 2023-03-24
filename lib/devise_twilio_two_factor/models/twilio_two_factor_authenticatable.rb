@@ -34,7 +34,6 @@ module Devise
         Devise::Models.config(self, 
                               :otp_code_length, 
                               :otp_destination,
-                              :otp_sender_name,
                               :communication_type, 
                               :remember_otp_session_for_seconds,
                               :second_factor_resource_id,
