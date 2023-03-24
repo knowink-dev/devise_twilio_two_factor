@@ -16,8 +16,8 @@ class TwilioTwoFactorAuthClient
         .verifications
         .create(to: @resource.send(@resource.class.otp_destination), channel: @resource.class.communication_type)
       return true if response.status == STATUS_PENDING
-    rescue => e
-      puts e
+    rescue Twilio::REST::RestError => e
+      puts e.message
       return false
     end
   end
@@ -30,8 +30,8 @@ class TwilioTwoFactorAuthClient
         .verification_checks
         .create(to: @resource.send(@resource.class.otp_destination), code: code)
       return true if response.status == STATUS_APPROVED
-    rescue => e
-      puts e
+    rescue Twilio::REST::RestError => e
+      puts e.message
       return false
     end
   end
