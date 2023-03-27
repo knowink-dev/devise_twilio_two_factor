@@ -12,9 +12,7 @@ module Devise
       end
 
       def login_attempts_exceeded?
-        return false unless self.locked_at.present?
-
-        self.failed_attempts.to_i >= self.locked_at.to_i
+        self.failed_attempts.to_i >= Devise.maximum_attempts
       end
 
       def need_two_factor_authentication?(request)

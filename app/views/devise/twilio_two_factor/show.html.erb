@@ -1,0 +1,10 @@
+<h2>Enter OTP Code</h2>
+
+<p><%= flash[:notice] %></p>
+
+<%= form_tag([resource_name, :two_factor_authentication], :method => :put) do %>
+  <%= text_field_tag :code, '', autofocus: true %>
+  <%= submit_tag "Submit" %>
+<% end %>
+<%= link_to "Resend Code", send("resend_code_#{resource_name}_two_factor_authentication_path"), action: :get %>
+<%= link_to "Sign out", send("destroy_#{resource_name}_session_path"), :method => :delete %>
