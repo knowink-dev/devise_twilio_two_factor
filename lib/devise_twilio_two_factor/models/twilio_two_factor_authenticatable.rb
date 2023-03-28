@@ -2,21 +2,42 @@ module Devise
   module Models
     module TwilioTwoFactorAuthenticatable
       extend ActiveSupport::Concern
-      include Devise::Models::DatabaseAuthenticatable
 
-      def send_twilio_2fa_otp!
-        # implement twilio call to generate and send otp to user
-        return "sent code to user!"
+      def send_otp_code
+        twilio_client.send_code
       end
 
-      def validate_twilio_2fa_otp!(code)
-        # implement twilio call for verification
-        return "user provided code #{code} is valid"
+      def verify_otp_code(code)
+        twilio_client.verify_code(code)
       end
 
-    protected
+      def login_attempts_exceeded?
+        self.failed_attempts.to_i >= Devise.maximum_attempts
+      end
+
+      def need_two_factor_authentication?(request)
+        self.otp_required_for_login
+      end
+
+      def send_new_otp_after_login?
+        self.otp_required_for_login
+      end
+
+      private def twilio_client
+        @twilio_client ||= TwilioTwoFactorAuthClient.new(self)
+      end
+
+      protected
       module ClassMethods
-        Devise::Models.config(self)
+        Devise::Models.config(self, 
+                              :otp_code_length, 
+                              :otp_destination,
+                              :communication_type, 
+                              :remember_otp_session_for_seconds,
+                              :second_factor_resource_id,
+                              :twilio_verify_service_sid,
+                              :twilio_auth_token, 
+                              :twilio_account_sid)
       end
     end
   end
