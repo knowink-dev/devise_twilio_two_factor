@@ -1,22 +1,48 @@
-# DeviseTwilioTwoFactor
+# Devise Twilio Two Factor
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/devise_twilio_two_factor`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+The "Devise Twilio Two-Factor Authentication Gem" is an integration solution that brings together the robust security features of the Devise gem and the reliable functionality of Twilio APIs. With this solution, incorporating two-factor authentication for user authentication in your application has never been easier. By leveraging the power of Devise and Twilio together, your application can offer enhanced security measures to your users, reducing the likelihood of unauthorized access and potential data breaches.
 
 ## Installation
 
-Install the gem and add to the application's Gemfile by executing:
+Add devise_twilio_two_factor to your Gemfile with:
 
-    $ bundle add devise_twilio_two_factor
+```ruby
+# Gemfile
 
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install devise_twilio_two_factor
+gem 'devise_twilio_two_factor', '~> 0.1.x'
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+To integrate the Devise Twilio Two-Factor Authentication Gem, you'll need:
+
+- The [Devise gem](https://github.com/heartcombo/devise), set up according to their instructions.
+- A [Twilio](https://www.twilio.com/try-twilio) account with the account_sid and auth token from the console.
+- A Verify Service with its ID.
+
+Add them to your devise.rb
+```ruby
+  config.twilio_account_sid = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  config.twilio_auth_token = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  config.twilio_verify_service_sid = "VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+```
+
+From here, the generator should get you the rest of the way (you can skip the rest of the section):
+```bash
+./bin/rails generate devise_twilio_two_factor MODEL
+```
+
+To add two-factor authentication to a model, simply add the Devise Twilio Two-Factor Authenticatable module and specify two options:
+
+1) The otp_destination option should represent the field containing the phone number or email address where the OTP code will be sent.
+2) The communication_type option should be set to either "sms" or "email" depending on the desired mode of communication.
+
+Ex. for a user with a phone field -> user.phone = '+18001234567'
+```ruby
+  devise :twilio_two_factor_authenticatable, otp_destination: 'phone', communication_type: "sms"
+```
+
+lastly, just create a migration to add  `otp_required_for_login:boolean` to the table of the resource you wish to add 2fa to.
 
 ## Development
 
@@ -31,3 +57,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
