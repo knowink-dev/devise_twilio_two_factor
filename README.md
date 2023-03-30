@@ -13,12 +13,12 @@ To integrate the Devise Twilio Two-Factor Authentication Gem, you'll need:
   - [Twilio Verify API Docs](https://www.twilio.com/docs/verify/api)
   
 ## Setup
-Add devise_twilio_two_factor to your Gemfile with:
+Add devise_twilio_two_factor to your Gemfile:
 
 ```ruby
 # Gemfile
 
-gem 'devise_twilio_two_factor', '~> 0.1.x'
+gem 'devise_twilio_two_factor', '~> 0.1.1'
 ```
 
 Add twilio `twilio_account_sid`, `twilio_auth_token` and `twilio_verify_service_sid` to `config/initializers/devise.rb`
