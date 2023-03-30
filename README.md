@@ -2,16 +2,6 @@
 
 The "Devise Twilio Two-Factor Authentication Gem" is an integration solution that brings together the robust security features of the Devise gem and the reliable functionality of Twilio APIs. With this solution, incorporating two-factor authentication for user authentication in your application has never been easier. By leveraging the power of Devise and Twilio together, your application can offer enhanced security measures to your users, reducing the likelihood of unauthorized access and potential data breaches.
 
-## Installation
-
-Add devise_twilio_two_factor to your Gemfile with:
-
-```ruby
-# Gemfile
-
-gem 'devise_twilio_two_factor', '~> 0.1.x'
-```
-
 ## Usage
 
 To integrate the Devise Twilio Two-Factor Authentication Gem, you'll need:
@@ -23,8 +13,15 @@ To integrate the Devise Twilio Two-Factor Authentication Gem, you'll need:
   - [Twilio Verify API Docs](https://www.twilio.com/docs/verify/api)
   
 ## Setup
+Add devise_twilio_two_factor to your Gemfile with:
 
-Add them to your devise.rb
+```ruby
+# Gemfile
+
+gem 'devise_twilio_two_factor', '~> 0.1.x'
+```
+
+Add twilio `twilio_account_sid`, `twilio_auth_token` and `twilio_verify_service_sid` to `config/initializers/devise.rb`
 ```ruby
   config.twilio_account_sid = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   config.twilio_auth_token = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
