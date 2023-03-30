@@ -61,7 +61,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/devise_twilio_two_factor.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jliv316/devise_twilio_two_factor.
 
 ## License
 
