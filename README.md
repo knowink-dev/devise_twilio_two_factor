@@ -18,8 +18,10 @@ To integrate the Devise Twilio Two-Factor Authentication Gem, you'll need:
 
 - The [Devise gem](https://github.com/heartcombo/devise), set up according to their instructions.
 - A [Twilio](https://www.twilio.com/try-twilio) account with the account_sid and auth token from the console.
-- A Verify Service with its ID.
-
+- A Twilio Verify Service with its ID.
+  - Create service in [Twilio Verify Console](https://www.twilio.com/console/verify/services)
+  - [Twilio Verify API Docs](https://www.twilio.com/docs/verify/api)
+  
 Add them to your devise.rb
 ```ruby
   config.twilio_account_sid = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
