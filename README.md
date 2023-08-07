@@ -2,8 +2,7 @@
 - The "Devise Twilio Two-Factor Authentication Gem" is an integration solution that brings together the robust security features of the Devise gem and the reliable functionality of Twilio APIs.
 - By leveraging the power of Devise and Twilio together, your application can offer enhanced security measures to your users, reducing the likelihood of unauthorized access and potential data breaches.
 
-<br/>
-<br/>
+
 ## Usage
 
 To integrate the Devise Twilio Two-Factor Authentication Gem, you'll need:
