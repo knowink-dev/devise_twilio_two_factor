@@ -5,7 +5,7 @@ class TwilioTwoFactorAuthenticatableDouble
   include ::ActiveModel::Validations::Callbacks
   extend  ::Devise::Models
 
-  devise :twilio_two_factor_authenticatable, otp_destination: "phone", communication_type: "sms"
+  devise :twilio_two_factor_authenticatable, otp_destination: "phone", communication_type: "sms", entity_id: "uid"
 end
 
 RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
@@ -33,7 +33,7 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
         allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
       end
 
-      it 'instanciates twilio client and tells client to send code' do
+      it 'instantiates twilio client and tells client to send code' do
         expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
         expect(twilio_client).to receive(:send_code)
 
@@ -45,13 +45,13 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
       let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
       let(:code) { "123456" }
       before do
-        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_code).with(code) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_otp_code).with(code) { true }
         allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
       end
 
-      it 'instantiates twilio client and calls verify_code' do
+      it 'instantiates twilio client and calls verify_otp_code' do
         expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
-        expect(twilio_client).to receive(:verify_code).with(code)
+        expect(twilio_client).to receive(:verify_otp_code).with(code)
 
         subject.verify_otp_code(code)
       end
@@ -73,14 +73,34 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
     describe '.send_new_otp_after_login?' do
       it 'should return false if otp_required_for_login is false' do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { false }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { false }
+
 
         expect(subject.send_new_otp_after_login?).to eq(false)
       end
 
       it 'should return true if otp_required_for_login is true' do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { false }
+
 
         expect(subject.send_new_otp_after_login?).to eq(true)
+      end
+
+      it 'should return false if totp_enabled is true' do
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { false }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { true }
+
+
+        expect(subject.send_new_otp_after_login?).to eq(false)
+      end
+
+      it 'should return false if totp_enabled is true and otp_required_for_login is true' do
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { true }
+
+
+        expect(subject.send_new_otp_after_login?).to eq(false)
       end
     end
   end
