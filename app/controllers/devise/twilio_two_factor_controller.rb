@@ -14,7 +14,7 @@ class Devise::TwilioTwoFactorController < DeviseController
   def update
     render :show and return if params[:code].nil?
 
-    if resource.verify_otp_code(params[:code])
+    if resource.factor_verified?(params[:code])
       after_two_factor_success_for(resource)
     else
       after_two_factor_fail_for(resource)
@@ -39,7 +39,9 @@ class Devise::TwilioTwoFactorController < DeviseController
       sign_in(resource_name, resource, bypass: true)
     end
     set_flash_message :notice, :success
-    resource.update_attribute(:failed_attempts, 0)
+    resource.failed_attempts = 0
+    resource.twilio_factor_secret = nil
+    resource.save
 
     redirect_to after_two_factor_success_path_for(resource)
   end
