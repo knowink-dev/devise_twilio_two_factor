@@ -45,13 +45,13 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
       let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
       let(:code) { "123456" }
       before do
-        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_code).with(code) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_otp_code).with(code) { true }
         allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
       end
 
-      it 'instantiates twilio client and calls verify_code' do
+      it 'instantiates twilio client and calls verify_otp_code' do
         expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
-        expect(twilio_client).to receive(:verify_code).with(code)
+        expect(twilio_client).to receive(:verify_otp_code).with(code)
 
         subject.verify_otp_code(code)
       end
