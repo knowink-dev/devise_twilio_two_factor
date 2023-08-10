@@ -87,20 +87,20 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
         expect(subject.send_new_otp_after_login?).to eq(true)
       end
 
-      it 'should return true if totp_enabled is true' do
+      it 'should return false if totp_enabled is true' do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { false }
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { true }
 
 
-        expect(subject.send_new_otp_after_login?).to eq(true)
+        expect(subject.send_new_otp_after_login?).to eq(false)
       end
 
-      it 'should return true if totp_enabled is true and otp_required_for_login is true' do
+      it 'should return false if totp_enabled is true and otp_required_for_login is true' do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { true }
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { true }
 
 
-        expect(subject.send_new_otp_after_login?).to eq(true)
+        expect(subject.send_new_otp_after_login?).to eq(false)
       end
     end
   end
