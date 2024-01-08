@@ -3,12 +3,17 @@ require 'devise/version'
 class Devise::TwilioTwoFactorController < DeviseController
   prepend_before_action :authenticate_scope!
   before_action :prepare_and_validate, :handle_two_factor_authentication
+  skip_before_action :account_check
+
 
   def authenticate_scope!
     self.resource = send("current_#{resource_name}")
   end
 
   def show
+  end
+
+  def account_check
   end
 
   def update
