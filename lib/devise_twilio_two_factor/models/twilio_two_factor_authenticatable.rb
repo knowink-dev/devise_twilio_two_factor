@@ -28,21 +28,21 @@ module Devise
       end
 
       def need_two_factor_authentication?
-        self.otp_required_for_login || self.totp_enabled
+        self.two_factor_auth_via_sms_enabled || self.two_factor_auth_via_authenticator_enabled
       end
 
       def send_new_otp_after_login?
-        return false if self.totp_enabled
+        return false if self.two_factor_auth_via_authenticator_enabled
 
-        self.otp_required_for_login
+        self.two_factor_auth_via_sms_enabled
       end
 
       def create_new_totp_factor_after_login?
-        self.totp_enabled && self.twilio_factor_sid.blank?
+        self.two_factor_auth_via_authenticator_enabled && self.twilio_factor_sid.blank?
       end
 
       def factor_verified?(code)
-        if self.totp_enabled
+        if self.two_factor_auth_via_authenticator_enabled
           self.twilio_factor_secret.present? ? verify_totp_factor(code) : verify_totp_challenge(code)
         else
           verify_otp_code(code)

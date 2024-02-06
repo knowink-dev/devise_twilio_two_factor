@@ -34,7 +34,7 @@ module Devise
 end
 
 module TwoFactorAuthentication
-  NEED_AUTHENTICATION = "otp_required_for_login"
+  NEED_AUTHENTICATION = "need_two_factor_authentication?"
   REMEMBER_TFA_COOKIE_NAME = "remember_tfa"
 
   module Controllers
