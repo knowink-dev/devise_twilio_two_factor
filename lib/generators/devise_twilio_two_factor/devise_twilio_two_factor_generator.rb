@@ -16,7 +16,8 @@ module DeviseTwilioTwoFactor
       def create_devise_twilio_two_factor_migration
         migration_arguments = [
                                 "add_devise_twilio_two_factor_to_#{plural_name}",
-                                "otp_required_for_login:boolean",
+                                "two_factor_auth_via_sms_enabled:boolean",
+                                "two_factor_auth_via_authenticator_enabled:boolean",
                               ]
 
         Rails::Generators.invoke('active_record:migration', migration_arguments)

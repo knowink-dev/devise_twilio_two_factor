@@ -71,33 +71,33 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
     end
 
     describe '.send_new_otp_after_login?' do
-      it 'should return false if otp_required_for_login is false' do
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { false }
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { false }
+      it 'should return false if two_factor_auth_via_sms_enabled is false' do
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_sms_enabled) { false }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { false }
 
 
         expect(subject.send_new_otp_after_login?).to eq(false)
       end
 
-      it 'should return true if otp_required_for_login is true' do
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { true }
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { false }
+      it 'should return true if two_factor_auth_via_sms_enabled is true' do
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_sms_enabled) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { false }
 
 
         expect(subject.send_new_otp_after_login?).to eq(true)
       end
 
-      it 'should return false if totp_enabled is true' do
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { false }
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { true }
+      it 'should return false if two_factor_auth_via_authenticator_enabled is true' do
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_sms_enabled) { false }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { true }
 
 
         expect(subject.send_new_otp_after_login?).to eq(false)
       end
 
-      it 'should return false if totp_enabled is true and otp_required_for_login is true' do
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:otp_required_for_login) { true }
-        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:totp_enabled) { true }
+      it 'should return false if two_factor_auth_via_authenticator_enabled is true and two_factor_auth_via_sms_enabled is true' do
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_sms_enabled) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { true }
 
 
         expect(subject.send_new_otp_after_login?).to eq(false)

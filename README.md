@@ -49,7 +49,7 @@ Ex. for a user with a phone field -> user.phone = '+18001234567'
 ```
 <br/>
 
-lastly, just create a migration to add  `otp_required_for_login:boolean` to the table of the resource you wish to add 2fa to.
+lastly, just create a migration to add  `two_factor_auth_via_sms_enabled:boolean` and 'two_factor_auth_via_authenticator_enabled:boolean' to the table of the resource you wish to add 2fa to.
 <br/><br/>
 ## Development
 

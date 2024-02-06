@@ -48,12 +48,19 @@ class Devise::TwilioTwoFactorController < DeviseController
     resource.twilio_factor_secret = nil
     resource.save
 
+    users_audit_logger = UsersAuditLogger.new(user: resource, account: resource.account, remote_ip: request.remote_ip, resource: self.class)
+    users_audit_logger.mfa_attempt_succeeded
+
     redirect_to after_two_factor_success_path_for(resource)
   end
 
   def after_two_factor_fail_for(resource)
     resource.failed_attempts += 1
     resource.save
+
+    users_audit_logger = UsersAuditLogger.new(user: resource, account: resource.account, remote_ip: request.remote_ip, resource: self.class)
+    users_audit_logger.mfa_attempt_failed
+
     set_flash_message :alert, :attempt_failed, now: true
 
     if resource.login_attempts_exceeded?
