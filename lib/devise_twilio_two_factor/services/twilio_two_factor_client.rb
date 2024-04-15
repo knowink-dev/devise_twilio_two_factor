@@ -10,12 +10,13 @@ class TwilioTwoFactorAuthClient
 
   def create_new_totp_factor
     begin
+      friendly_name = "#{Devise.host_name.split('.').first} - #{@resource.email}"
       new_factor = @client.verify
         .v2
         .services(@resource.class.twilio_verify_service_sid)
         .entities(@resource.send(@resource.class.entity_id))
         .new_factors
-        .create(friendly_name: "ePulse", factor_type: 'totp')
+        .create(friendly_name: friendly_name, factor_type: 'totp')
 
       @resource.update(twilio_factor_sid: new_factor.sid, twilio_factor_secret: new_factor.binding["uri"])
       return true

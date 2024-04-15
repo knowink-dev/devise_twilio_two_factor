@@ -31,6 +31,9 @@ module Devise
 
   mattr_accessor :delete_cookie_on_logout
   @@delete_cookie_on_logout = true
+
+  mattr_accessor :host_name
+  @@host_name = "localhost"
 end
 
 module TwoFactorAuthentication
