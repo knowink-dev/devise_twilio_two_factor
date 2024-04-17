@@ -1,4 +1,4 @@
-Warden::Manager.after_authentication do |user, auth, options|
+Warden::Manager.after_set_user :only => [:set_user, :authentication] do |user, auth, options|
   if auth.env["action_dispatch.cookies"]
     expected_cookie_value = "#{user.class}-#{user.public_send(Devise.second_factor_resource_id)}"
       actual_cookie_value = auth.env["action_dispatch.cookies"].signed[TwoFactorAuthentication::REMEMBER_TFA_COOKIE_NAME]
@@ -6,10 +6,10 @@ Warden::Manager.after_authentication do |user, auth, options|
   end
 
   if user.respond_to?(:need_two_factor_authentication?) && !bypass_by_cookie
-     if auth.session(options[:scope])[TwoFactorAuthentication::NEED_AUTHENTICATION] = user.need_two_factor_authentication?
-       user.send_otp_code if user.send_new_otp_after_login?
-       user.create_new_totp_factor if user.create_new_totp_factor_after_login?
-     end
+    if auth.session(options[:scope])[TwoFactorAuthentication::NEED_AUTHENTICATION] = user.need_two_factor_authentication?
+      user.send_otp_code if user.send_new_otp_after_login?
+      user.create_new_totp_factor if user.create_new_totp_factor_after_login?
+    end
   end
 end
 
