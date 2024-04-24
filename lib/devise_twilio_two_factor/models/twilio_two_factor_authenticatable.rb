@@ -27,6 +27,12 @@ module Devise
         self.failed_attempts.to_i >= Devise.maximum_attempts
       end
 
+      def mfa_timedout?(mfa_login_attempt_expires_at)
+        return false if mfa_login_attempt_expires_at.blank?
+
+        Time.now.utc > mfa_login_attempt_expires_at
+      end
+
       def need_two_factor_authentication?
         self.two_factor_auth_via_sms_enabled || self.two_factor_auth_via_authenticator_enabled
       end

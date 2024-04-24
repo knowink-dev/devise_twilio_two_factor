@@ -6,3 +6,5 @@ en:
       max_login_attempts_reached: "Access completely denied as you have reached your attempts limit"
       contact_administrator: "Please contact your system administrator."
       code_has_been_sent: "Your authentication code has been sent."
+      mfa_timeout: "You have exceeded the two-minute time limit for entering a valid MFA code. Please log in again to continue."
+
