@@ -89,9 +89,12 @@ class Devise::TwilioTwoFactorController < DeviseController
   def prepare_and_validate
     redirect_to :root and return if resource.nil?
 
-    if resource.login_attempts_exceeded?
-      sign_out(resource)
-      redirect_to :root
-    end
+    error_message = I18n.t('devise.twilio_two_factor.mfa_timeout') if resource.mfa_timedout?(warden.session(resource_name)["mfa_login_attempt_expires_at"])
+    error_message = I18n.t('devise.twilio_two_factor.attempt_failed') if resource.login_attempts_exceeded?
+
+    return unless error_message
+
+    sign_out(resource)
+    redirect_to "/#{resource_name.to_s.pluralize}/sign_in", alert: error_message
   end
 end

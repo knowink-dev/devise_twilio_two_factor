@@ -7,6 +7,7 @@ Warden::Manager.after_set_user :only => [:set_user, :authentication] do |user, a
 
   if user.respond_to?(:need_two_factor_authentication?) && !bypass_by_cookie
     if auth.session(options[:scope])[TwoFactorAuthentication::NEED_AUTHENTICATION] = user.need_two_factor_authentication?
+      auth.session(options[:scope])["mfa_login_attempt_expires_at"] = Devise.time_to_authenticate.seconds.from_now.utc
       user.send_otp_code if user.send_new_otp_after_login?
       user.create_new_totp_factor if user.create_new_totp_factor_after_login?
     end

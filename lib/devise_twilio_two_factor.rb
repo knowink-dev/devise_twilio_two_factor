@@ -34,6 +34,9 @@ module Devise
 
   mattr_accessor :host_name
   @@host_name = "localhost"
+
+  mattr_accessor :time_to_authenticate
+  @@time_to_authenticate = 120.seconds
 end
 
 module TwoFactorAuthentication
