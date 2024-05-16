@@ -6,5 +6,6 @@ en:
       max_login_attempts_reached: "Access completely denied as you have reached your attempts limit"
       contact_administrator: "Please contact your system administrator."
       code_has_been_sent: "Your authentication code has been sent."
+      twilio_authenticator_factor_refreshed: "Authenticator factor expired. Please rescan the QR code below using your desired authenticator app and enter 6 digit code below."
+      twilio_authenticator_factor_refresh_failed: "Authenticator Factor expired. Automatic factor refresh failed. Please contact ePulse support team to manually refresh authenticator factor."
       mfa_timeout: "You have exceeded the two-minute time limit for entering a valid MFA code. Please log in again to continue."
-

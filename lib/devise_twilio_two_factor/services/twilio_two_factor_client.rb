@@ -8,7 +8,11 @@ class TwilioTwoFactorAuthClient
     @client = Twilio::REST::Client.new(resource.class.twilio_account_sid, resource.class.twilio_auth_token)
   end
 
-  def create_new_totp_factor
+
+  # ***** AUTHENTICATOR Two Factor Authentication *****
+
+
+  def create_authenticator_factor
     begin
       friendly_name = "#{Devise.host_name.split('.').first} - #{@resource.email}"
       new_factor = @client.verify
@@ -18,7 +22,10 @@ class TwilioTwoFactorAuthClient
         .new_factors
         .create(friendly_name: friendly_name, factor_type: 'totp')
 
-      @resource.update(twilio_factor_sid: new_factor.sid, twilio_factor_secret: new_factor.binding["uri"])
+      @resource.update(twilio_factor_sid: new_factor.sid,
+                       twilio_factor_secret: new_factor.binding["uri"],
+                       twilio_factor_created_at: Time.now.utc
+                      )
       return true
     rescue Twilio::REST::RestError => e
       puts e.message
@@ -26,13 +33,14 @@ class TwilioTwoFactorAuthClient
     end
   end
 
-  def verify_totp_factor(code)
+  def verify_authenticator_factor(code)
     begin
       response = @client.verify.v2
         .services(@resource.class.twilio_verify_service_sid)
         .entities(@resource.send(@resource.class.entity_id))
         .factors(@resource.twilio_factor_sid)
         .update(auth_payload: code)
+
 
       return true if response.status == STATUS_VERIFIED
       return false
@@ -42,7 +50,7 @@ class TwilioTwoFactorAuthClient
     end
   end
 
-  def verify_totp_challenge(code)
+  def verify_authenticator_factor(code)
     begin
       response = @client.verify.v2
         .services(@resource.class.twilio_verify_service_sid)
@@ -62,7 +70,10 @@ class TwilioTwoFactorAuthClient
   end
 
 
-  def send_code
+  # ***** SMS Two Factor Authentication *****
+
+
+  def send_sms_code
     begin
       response = @client.verify
         .v2
@@ -78,7 +89,7 @@ class TwilioTwoFactorAuthClient
     end
   end
 
-  def verify_otp_code(code)
+  def verify_sms_code(code)
     begin
       response = @client.verify
         .v2
