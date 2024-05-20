@@ -3,61 +3,116 @@ module Devise
     module TwilioTwoFactorAuthenticatable
       extend ActiveSupport::Concern
 
-      def send_otp_code
-        twilio_client.send_code
+      def verify_factor(code)
+        case active_mfa_type
+        when :authenticator
+          if authenticator_factor_verified?
+            return verify_authenticator_challenge(code)
+          else
+            return verify_authenticator_factor(code)
+          end
+        when :sms
+          verify_sms_code(code)
+        end
       end
 
-      def create_new_totp_factor
-        twilio_client.create_new_totp_factor
+
+      # ***** SMS Two Factor Authentication *****
+
+      def send_one_time_password
+        twilio_client.send_sms_code
       end
 
-      def verify_otp_code(code)
-        twilio_client.verify_otp_code(code)
+      def verify_one_time_password(code)
+        twilio_client.verify_sms_code(code)
       end
 
-      def verify_totp_factor(code)
-        twilio_client.verify_totp_factor(code)
+      # ***** SMS Helper Methods *****
+
+      def send_sms_otp_after_login?
+        active_mfa_type == :sms
       end
 
-      def verify_totp_challenge(code)
-        twilio_client.verify_totp_challenge(code)
+
+
+
+      # ***** AUTHENTICATOR Two Factor Authentication *****
+
+      def create_authenticator_factor
+        twilio_client.create_authenticator_factor
       end
+
+      def verify_authenticator_factor(code)
+        twilio_client.verify_authenticator_factor(code)
+      end
+
+      def verify_authenticator_challenge(code)
+        twilio_client.verify_authenticator_challenge(code)
+      end
+
+      def refresh_authenticator_factor
+        self.update(twilio_factor_sid: nil, twilio_factor_secret: nil, twilio_factor_created_at: nil)
+
+        twilio_client.create_authenticator_factor
+      end
+
+      # ***** AUTHENTICATOR Helper Methods *****
+
+      def create_authenticator_factor_after_login?
+        active_mfa_type == :authenticator && self.twilio_factor_sid.blank?
+      end
+
+        # After the first login via authenticator connection is verified and we delete the twilio_factor_secret for security purposes
+      def authenticator_factor_verified?
+        return unless active_mfa_type == :authenticator
+
+        self.twilio_factor_sid.present? && self.twilio_factor_secret.blank?
+      end
+
+        # if factor created for first authenticator login has not been verified in 10 minutes, it is considered expired
+      def authenticator_factor_expired?
+        return unless active_mfa_type == :authenticator 
+        return if authenticator_factor_verified? || self.twilio_factor_created_at.blank?
+
+        expiration_time = self.twilio_factor_created_at + 10.minutes
+
+        Time.now.utc > expiration_time
+      end
+
+
+
+
+      # ***** Helper Methods *****
+
 
       def login_attempts_exceeded?
         self.failed_attempts.to_i >= Devise.maximum_attempts
       end
 
       def mfa_timedout?(mfa_login_attempt_expires_at)
-        return false if mfa_login_attempt_expires_at.blank?
+        return if mfa_login_attempt_expires_at.blank?
 
         Time.now.utc > mfa_login_attempt_expires_at
       end
 
       def need_two_factor_authentication?
-        self.two_factor_auth_via_sms_enabled || self.two_factor_auth_via_authenticator_enabled
+        active_mfa_type == :authenticator || active_mfa_type == :sms
       end
 
-      def send_new_otp_after_login?
-        return false if self.two_factor_auth_via_authenticator_enabled
-
-        self.two_factor_auth_via_sms_enabled
+      def active_mfa_type
+        return :authenticator if self.two_factor_auth_via_authenticator_enabled
+        return :sms if self.two_factor_auth_via_sms_enabled
+        return :none
       end
 
-      def create_new_totp_factor_after_login?
-        self.two_factor_auth_via_authenticator_enabled && self.twilio_factor_sid.blank?
-      end
 
-      def factor_verified?(code)
-        if self.two_factor_auth_via_authenticator_enabled
-          self.twilio_factor_secret.present? ? verify_totp_factor(code) : verify_totp_challenge(code)
-        else
-          verify_otp_code(code)
-        end
-      end
+
+      # ***** TWILIO CLIENT *****
 
       private def twilio_client
         @twilio_client ||= TwilioTwoFactorAuthClient.new(self)
       end
+
 
       protected
       module ClassMethods
@@ -75,3 +130,4 @@ module Devise
     end
   end
 end
+
