@@ -75,4 +75,18 @@ RSpec.describe TwilioTwoFactorAuthClient, type: :service do
     end
   end
 
+  describe '#create_authenticator_factor' do
+    describe 'factor was created' do
+      it 'should return true' do
+        allow(mock_twilio_response).to receive(:status).and_return("pending")
+        allow(twilio_client).to receive_message_chain(:verify, :v2, :services, :verification_checks, :create).and_return(mock_twilio_response) 
+        expect(twilio_client).to receive_message_chain(:verify, :v2, :services, :verification_checks, :create) 
+
+        response = TwilioTwoFactorAuthClient.new(TwilioTwoFactorAuthenticatableDouble.new).verify_otp_code(mock_code)
+        expect(response).to eq(false)
+      end
+    end
+
+
+  end
 end

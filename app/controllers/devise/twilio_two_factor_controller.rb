@@ -72,6 +72,8 @@ class Devise::TwilioTwoFactorController < DeviseController
   end
 
   def refresh_authenticator_factor
+    return unless resource.authenticator_factor_expired?
+
     if resource.refresh_authenticator_factor
       redirect_to send("#{resource_name}_twilio_two_factor_path"), alert: I18n.t('devise.twilio_two_factor.twilio_authenticator_factor_refreshed')
     else

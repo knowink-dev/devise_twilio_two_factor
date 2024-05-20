@@ -19,11 +19,11 @@ module Devise
 
       # ***** SMS Two Factor Authentication *****
 
-      def send_sms_code
+      def send_one_time_password
         twilio_client.send_sms_code
       end
 
-      def verify_sms_code(code)
+      def verify_one_time_password(code)
         twilio_client.verify_sms_code(code)
       end
 
@@ -43,16 +43,14 @@ module Devise
       end
 
       def verify_authenticator_factor(code)
-        twilio_client.verify_totp_factor(code)
+        twilio_client.verify_authenticator_factor(code)
       end
 
       def verify_authenticator_challenge(code)
-        twilio_client.verify_totp_challenge(code)
+        twilio_client.verify_authenticator_challenge(code)
       end
 
       def refresh_authenticator_factor
-        return unless authenticator_factor_expired?
-
         self.update(twilio_factor_sid: nil, twilio_factor_secret: nil, twilio_factor_created_at: nil)
 
         twilio_client.create_authenticator_factor
@@ -73,9 +71,8 @@ module Devise
 
         # if factor created for first authenticator login has not been verified in 10 minutes, it is considered expired
       def authenticator_factor_expired?
-        return unless active_mfa_type == :authenticator && !authenticator_factor_verified?
-
-        return if self.twilio_factor_created_at.blank?
+        return unless active_mfa_type == :authenticator 
+        return if authenticator_factor_verified? || self.twilio_factor_created_at.blank?
 
         expiration_time = self.twilio_factor_created_at + 10.minutes
 

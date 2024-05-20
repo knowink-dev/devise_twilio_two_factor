@@ -1,7 +1,8 @@
 class TwilioTwoFactorAuthClient
-  STATUS_PENDING = "pending"
-  STATUS_APPROVED = "approved"
-  STATUS_VERIFIED = "verified"
+  STATUS_PENDING = "pending".freeze
+  STATUS_APPROVED = "approved".freeze
+  STATUS_VERIFIED = "verified".freeze
+  STATUS_UNVERIFIED = "unverified".freeze
 
   def initialize(resource)
     @resource = resource
@@ -22,11 +23,13 @@ class TwilioTwoFactorAuthClient
         .new_factors
         .create(friendly_name: friendly_name, factor_type: 'totp')
 
+
       @resource.update(twilio_factor_sid: new_factor.sid,
                        twilio_factor_secret: new_factor.binding["uri"],
                        twilio_factor_created_at: Time.now.utc
                       )
-      return true
+
+      new_factor.status == STATUS_UNVERIFIED
     rescue Twilio::REST::RestError => e
       puts e.message
       return false
@@ -42,15 +45,14 @@ class TwilioTwoFactorAuthClient
         .update(auth_payload: code)
 
 
-      return true if response.status == STATUS_VERIFIED
-      return false
+      response.status == STATUS_VERIFIED
     rescue Twilio::REST::RestError => e
       puts e.message
       return false
     end
   end
 
-  def verify_authenticator_factor(code)
+  def verify_authenticator_challenge(code)
     begin
       response = @client.verify.v2
         .services(@resource.class.twilio_verify_service_sid)
@@ -61,8 +63,7 @@ class TwilioTwoFactorAuthClient
           factor_sid: @resource.twilio_factor_sid
         )
 
-      return true if response.status == STATUS_APPROVED
-      return false
+      response.status == STATUS_APPROVED
     rescue Twilio::REST::RestError => e
       puts e.message
       return false
@@ -81,8 +82,7 @@ class TwilioTwoFactorAuthClient
         .verifications
         .create(to: @resource.send(@resource.class.otp_destination), channel: @resource.class.communication_type)
 
-      return true if response.status == STATUS_PENDING
-      return false
+      response.status == STATUS_PENDING
     rescue Twilio::REST::RestError => e
       puts e.message
       return false
@@ -96,8 +96,8 @@ class TwilioTwoFactorAuthClient
         .services(@resource.class.twilio_verify_service_sid)
         .verification_checks
         .create(to: @resource.send(@resource.class.otp_destination), code: code)
-      return true if response.status == STATUS_APPROVED
-      return false
+
+      response.status == STATUS_APPROVED
     rescue Twilio::REST::RestError => e
       puts e.message
       return false

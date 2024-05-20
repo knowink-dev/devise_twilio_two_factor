@@ -26,34 +26,34 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
       expect(subject.class.remember_otp_session_for_seconds).to eq(30.minutes)
     end
 
-    describe ".send_otp_code" do
+    describe ".send_sms_code" do
       let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
       before do
-        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:send_code) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:send_sms_code) { true }
         allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
       end
 
       it 'instantiates twilio client and tells client to send code' do
         expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
-        expect(twilio_client).to receive(:send_code)
+        expect(twilio_client).to receive(:send_sms_code)
 
-        subject.send_otp_code
+        subject.send_sms_code
       end
     end
 
-    describe '.verify_otp_code' do
+    describe '.verify_sms_code' do
       let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
       let(:code) { "123456" }
       before do
-        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_otp_code).with(code) { true }
+        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_sms_code).with(code) { true }
         allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
       end
 
-      it 'instantiates twilio client and calls verify_otp_code' do
+      it 'instantiates twilio client and calls verify_sms_code' do
         expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
-        expect(twilio_client).to receive(:verify_otp_code).with(code)
+        expect(twilio_client).to receive(:verify_sms_code).with(code)
 
-        subject.verify_otp_code(code)
+        subject.verify_sms_code(code)
       end
     end
 
@@ -70,13 +70,13 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
       end
     end
 
-    describe '.send_new_otp_after_login?' do
+    describe '.send_sms_otp_after_login?' do
       it 'should return false if two_factor_auth_via_sms_enabled is false' do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_sms_enabled) { false }
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { false }
 
 
-        expect(subject.send_new_otp_after_login?).to eq(false)
+        expect(subject.send_sms_otp_after_login?).to eq(false)
       end
 
       it 'should return true if two_factor_auth_via_sms_enabled is true' do
@@ -84,7 +84,7 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { false }
 
 
-        expect(subject.send_new_otp_after_login?).to eq(true)
+        expect(subject.send_sms_otp_after_login?).to eq(true)
       end
 
       it 'should return false if two_factor_auth_via_authenticator_enabled is true' do
@@ -92,7 +92,7 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { true }
 
 
-        expect(subject.send_new_otp_after_login?).to eq(false)
+        expect(subject.send_sms_otp_after_login?).to eq(false)
       end
 
       it 'should return false if two_factor_auth_via_authenticator_enabled is true and two_factor_auth_via_sms_enabled is true' do
@@ -100,8 +100,85 @@ RSpec.describe ::Devise::Models::TwilioTwoFactorAuthenticatable do
         allow_any_instance_of(TwilioTwoFactorAuthenticatableDouble).to receive(:two_factor_auth_via_authenticator_enabled) { true }
 
 
-        expect(subject.send_new_otp_after_login?).to eq(false)
+        expect(subject.send_sms_otp_after_login?).to eq(false)
       end
+
+            let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
+      before do
+        allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:send_sms_code) { true }
+        allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
+      end
+
+      it 'instantiates twilio client and tells client to send code' do
+        expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
+        expect(twilio_client).to receive(:send_sms_code)
+
+        subject.send_sms_code
+      end
+
+
+      describe '.create_authenticator_factor' do
+        let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
+        before do
+          allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:create_authenticator_factor) { true }
+          allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
+        end
+
+        it 'instantiates twilio client and tells client to create authenticator factor' do
+          expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
+          expect(twilio_client).to receive(:create_authenticator_factor)
+
+          subject.create_authenticator_factor
+        end
+      end
+
+      describe '.verify_authenticator_factor' do
+        let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
+        let(:code) { "123456" }
+        before do
+          allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_authenticator_factor).with(code) { true }
+          allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
+        end
+
+        it 'instantiates twilio client and calls verify_authenticator_factor' do
+          expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
+          expect(twilio_client).to receive(:verify_authenticator_factor).with(code)
+
+          subject.verify_authenticator_factor(code)
+        end
+      end
+
+      describe '.verify_authenticator_challenge' do
+        let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
+        let(:code) { "123456" }
+        before do
+          allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:verify_authenticator_challenge).with(code) { true }
+          allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
+        end
+
+        it 'instantiates twilio client and calls verify_authenticator_challenge' do
+          expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
+          expect(twilio_client).to receive(:verify_authenticator_challenge).with(code)
+
+          subject.verify_authenticator_challenge(code)
+        end
+      end
+
+      describe '.refresh_authenticator_factor' do
+        let(:twilio_client) { instance_double(TwilioTwoFactorAuthClient) }
+        before do
+          allow_any_instance_of(TwilioTwoFactorAuthClient).to receive(:refresh_authenticator_factor) { true }
+          allow(TwilioTwoFactorAuthClient).to receive(:new).and_return(twilio_client)
+        end
+
+        it 'instantiates twilio client and tells client to refresh authenticator factor' do
+          expect(TwilioTwoFactorAuthClient).to receive(:new).with(subject)
+          expect(twilio_client).to receive(:refresh_authenticator_factor)
+
+          subject.refresh_authenticator_factor
+        end
+      end
+
     end
   end
 end
