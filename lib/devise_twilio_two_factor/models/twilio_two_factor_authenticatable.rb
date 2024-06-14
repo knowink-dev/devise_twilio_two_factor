@@ -19,11 +19,11 @@ module Devise
 
       # ***** SMS Two Factor Authentication *****
 
-      def send_one_time_password
+      def send_sms_code
         twilio_client.send_sms_code
       end
 
-      def verify_one_time_password(code)
+      def verify_sms_code(code)
         twilio_client.verify_sms_code(code)
       end
 

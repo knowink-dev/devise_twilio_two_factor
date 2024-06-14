@@ -27,7 +27,7 @@ class Devise::TwilioTwoFactorController < DeviseController
   end
 
   def resend_code
-    resource.send_otp_code
+    resource.send_sms_code
     redirect_to send("#{resource_name}_twilio_two_factor_path"), notice: I18n.t('devise.twilio_two_factor.code_has_been_sent')
   end
 
