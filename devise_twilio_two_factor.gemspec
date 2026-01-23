@@ -8,7 +8,6 @@ Gem::Specification.new do |spec|
   spec.authors     = ['John Livingston']
   spec.email       = 'jclivingston316@gmail.com'
 
-
   spec.platform    = Gem::Platform::RUBY
   spec.licenses    = ['MIT']
   spec.summary     = 'Devise Twilio Verify Two Factor Authentication'
@@ -33,14 +32,12 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-
-
-  spec.add_runtime_dependency 'railties',       '>= 4.1.0'
   spec.add_runtime_dependency 'devise',         '~> 4.8.1'
-  spec.add_runtime_dependency 'twilio-ruby',    '~> 5.66.0'
+  spec.add_runtime_dependency 'railties',       '>= 4.1.0'
+  spec.add_runtime_dependency 'twilio-ruby', '~> 5.77.0'
 
-  spec.add_development_dependency 'bundler',    '> 1.0'
-  spec.add_development_dependency 'rspec',      '> 3'
   spec.add_development_dependency 'activemodel'
+  spec.add_development_dependency 'bundler', '> 1.0'
   spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rspec', '> 3'
 end
